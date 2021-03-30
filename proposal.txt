@@ -1,0 +1,47 @@
+Email 1:
+
+For my final assignment I want to explore problems with multiple agents.
+In particular I want build an environment where agents can compete and
+(hopefully) learn from their competition.
+
+My proposal is to build a simple curling gym environment. Here the
+agents would be the curlers, the state space would be the scoring area
+and rock placement (this would start discrete eg, one rock per grid
+square but could be extended to a continuous space), and the actions
+would be the direction of a throw and the strength of the throw. Each
+episode would then be a game where the agents take turns and compete to
+get the best score.
+
+The actual gym environment goal would be for the agent to defeat a
+simple hard-coded A.I. agent but the goal of this assignment will be to
+see how much (if any) the agents improve once they start playing against
+each other.
+
+Email 2:
+
+To expand on my ideas, I want to take this in two phases. The first would be
+a simple discrete space where we have a 3x3 grid as the state space.
+The agents select a column to throw in and then how hard to throw the rock
+(lets say a 1-3 value for now corresponding to how far they want it to go).
+The actual physics would be that the rocks push each other back one and stop.
+This would cascade until a rock goes off the grid where it would be removed.
+
+
+Then I would extend that to a continuous space. Here the environment is
+represented by a list of rocks and their x and y coordinates on a square scoring space.
+The possible actions become a (position, strength) pair where position is a value on
+the x-axis to throw the rock from and the strength value is where you want it to end up.
+The physics here would also be simplified to either stop at the desired spot if there's
+no collision or stop and push a rock straight back if there is.
+
+
+The reason for the discrete/continuous split is that I want something easy to
+work with while I get the framework up for competing agents and then we can hopefully
+see some interesting learning and behaviors on the continuous environment.
+
+
+I'm also keeping the physics simple to avoid the scope creep of building a
+physics environment when what we want is a training environment. But there appears
+to be some good physics examples on Gym so if time permits I'd want to try
+adding things like rotation to the throws or rocks being push back in different
+directions based on the collision.
