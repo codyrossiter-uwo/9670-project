@@ -9,6 +9,7 @@ from io import StringIO
 GRID_SIZE = 3
 SHOT_LOCATIONS = 3
 POWER_LEVELS = 3
+ROUNDS = 4
 
 
 class CurlingEnv(gym.Env):
@@ -36,6 +37,11 @@ class CurlingEnv(gym.Env):
     def __init__(self):
         self.grid = np.zeros((GRID_SIZE, GRID_SIZE), dtype=int)
         self.player_counter = 1
+        self.round_counter = 0
+
+        # TODO: convert action to (location, power) pair
+        # self.action_space = gym.spaces.MultiDiscrete([SHOT_LOCATIONS, POWER_LEVELS])
+        self.action_space = gym.spaces.Discrete(SHOT_LOCATIONS)
 
     def next_player(self):
         self.player_counter += 1
@@ -56,10 +62,9 @@ class CurlingEnv(gym.Env):
             target = 2
 
         # check to see if the shot is clear
-        # TODO: maybe put the check and push back code in the same for loop
         blocked_tile = None
         for i in range(target + 1):
-            if self.grid[location][target] != 0:
+            if self.grid[location][i] != 0:
                 blocked_tile = i
                 break
 
@@ -68,17 +73,29 @@ class CurlingEnv(gym.Env):
             self.grid[location][target] = self.player_counter
         # Otherwise push all rocks back 1 tile
         else:
-            # consider location 1 is blocked
-            incoming_rock = self.player_counter
-            while blocked_tile
-
-
-
-
+            rock_to_place = self.player_counter
+            for i in range(blocked_tile, GRID_SIZE):
+                # if the tile isn't empty swap the rocks
+                if rock_to_place != 0:
+                    rock_to_place, self.grid[location][i] = self.grid[location][i], rock_to_place
 
         self.next_player()
-        return None
 
+        self.round_counter += 1
+        done = self.round_counter >= ROUNDS
+
+        if done:
+            # TODO: calculate reward based on score
+            reward = 10
+        else:
+            reward = 0
+
+        # TODO: right now we assume only player 1 can train (eg, receive rewards)
+        #       maybe rewrite so that each agent is told what player they are
+        #       so they can be like player 0 gets reward[0], player 1 gets reward[1]
+        return self.grid, reward, done, {}
 
     def render(self, mode='human'):
-        pass
+        print()
+        for row in self.grid:
+            print(row)
