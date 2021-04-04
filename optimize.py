@@ -1,44 +1,34 @@
 import random
 
+import gym
 import numpy as np
+import matplotlib.pyplot as plt
+import optuna
 
-from agent import Agent
 from curling_discrete import CurlingEnv
+from main import RandomAgent
 from monte_carlo import MonteCarlo
 from player_coordinator import PlayerCoordinator
 
-import matplotlib.pyplot as plt
-
-class RandomAgent(Agent):
-
-    def next_move(self, state):
-        return random.randint(0, 2)
-
-    def update_agent(self, state, action, reward, done):
-        # No need to update the state or reward.
-        pass
-
-    def start_episode(self):
-        # No state to initialize
-        pass
-
-    def end_episode(self):
-        # No state or variable updates needed.
-        pass
+"""
+This script uses the Optuna library to optimize the hyperparameters as shown
+in the colab notebook: 
+https://colab.research.google.com/drive/1uRCh8SvpVars-oxyL1t4dBxbXm70F29v?usp=sharing#scrollTo=faK-vvkceHod
+"""
 
 
-if __name__ == '__main__':
+def objective(trial):
     env = CurlingEnv()
     agent1 = MonteCarlo(str(random.randint(0, 100)),
-                        gamma=0.6387,
-                        epsilon=0.9156,
-                        decay_rate=0.9155)
+                        gamma=trial.suggest_float('gamma', 0.1, 1.0),
+                        epsilon=trial.suggest_float('epsilon', 0.9, 1.0),
+                        decay_rate=trial.suggest_float('decay_rate', 0.9, 0.99999))
     agent2 = RandomAgent(str(random.randint(0, 100)))
 
     wins = []
     rolling_average = []
 
-    for _ in range(100000):
+    for _ in range(10000):
         state = env.reset()
         coordinator = PlayerCoordinator(agent1, agent2, state)
         coordinator.start_episode()
@@ -60,9 +50,10 @@ if __name__ == '__main__':
             rolling_average.append(np.mean(wins[-100:]))
 
 
-    print("Wins {}".format(np.sum(wins)))
-    plt.plot(rolling_average)
-    plt.ylabel("Average over 100")
-    plt.xlabel("episode")
-    plt.savefig("debug-result")
+    score = np.mean(rolling_average)
+    return score
 
+study = optuna.create_study(direction="maximize", sampler=optuna.samplers.TPESampler(seed=42))
+study.optimize(objective, n_trials=100)
+
+print(study.best_trial)
