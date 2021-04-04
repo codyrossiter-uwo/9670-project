@@ -22,7 +22,7 @@ if __name__ == '__main__':
     while not done:
         action = coordinator.next_move()
         state, reward, done, _ = env.step(action)
-        coordinator.inform_agent(state, reward, done)
+        coordinator.inform_player(state, reward, done)
         coordinator.next_turn()
         env.render()
 

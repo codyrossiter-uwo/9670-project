@@ -15,7 +15,7 @@ class PlayerCoordinator:
     def next_move(self):
         return self.current_player.next_move()
 
-    def inform_agent(self, state, reward, done):
+    def inform_player(self, state, reward, done):
         # self.agent.process_move(...)
         pass
 

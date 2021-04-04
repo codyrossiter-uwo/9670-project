@@ -101,9 +101,6 @@ class CurlingEnv(gym.Env):
         else:
             reward = (0, 0)
 
-        # TODO: right now we assume only player 1 can train (eg, receive rewards)
-        #       maybe rewrite so that each agent is told what player they are
-        #       so they can be like player 0 gets reward[0], player 1 gets reward[1]
         return self.grid, reward, done, {}
 
     def calculate_reward(self):
