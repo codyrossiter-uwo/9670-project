@@ -12,10 +12,18 @@ class PlayerCoordinator:
         else:
             self.current_player = self.player1
 
-    def next_move(self):
-        return self.current_player.next_move()
+    def next_move(self, state):
+        return self.current_player.next_move(state)
 
-    def inform_player(self, state, reward, done):
+    def start_episode(self):
+        self.player1.start_episode()
+        self.player2.start_episode()
+
+    def end_episode(self):
+        self.player1.end_episode()
+        self.player2.end_episode()
+
+    def inform_player(self, state, action, reward, done):
         # self.agent.process_move(...)
         pass
 
