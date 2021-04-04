@@ -1,34 +1,33 @@
 import random
+
+from agent import Agent
 from curling_discrete import CurlingEnv
 from player_coordinator import PlayerCoordinator
 
 
-class RandomAgent:
-    def __init__(self):
-        self.name = str(random.randint(0, 100))
+class RandomAgent(Agent):
 
     def next_move(self):
         return random.randint(0, 2)
 
+    def update_agent(self, state, reward, done):
+        pass
+
 
 if __name__ == '__main__':
     env = CurlingEnv()
-    state = env.reset()
+    agent1 = RandomAgent(str(random.randint(0, 100)))
+    agent2 = RandomAgent(str(random.randint(0, 100)))
 
-    coordinator = PlayerCoordinator(RandomAgent(), RandomAgent(), state)
-
-    done = False
-    env.render()
-    while not done:
-        action = coordinator.next_move()
-        state, reward, done, _ = env.step(action)
-        coordinator.inform_player(state, reward, done)
-        coordinator.next_turn()
-        env.render()
-
-        if done:
-            print("Player 1 score: {}".format(reward[0]))
-            print("Player 2 score: {}".format(reward[1]))
+    for _ in range(10):
+        state = env.reset()
+        coordinator = PlayerCoordinator(agent1, agent2, state)
+        done = False
+        while not done:
+            action = coordinator.next_move()
+            state, reward, done, _ = env.step(action)
+            coordinator.inform_player(state, reward, done)
+            coordinator.next_turn()
 
 
 
