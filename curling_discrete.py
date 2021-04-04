@@ -38,10 +38,19 @@ class CurlingEnv(gym.Env):
         self.grid = np.zeros((GRID_SIZE, GRID_SIZE), dtype=int)
         self.player_counter = 1
         self.round_counter = 0
+        self.last_action = None
 
         # TODO: convert action to (location, power) pair
         # self.action_space = gym.spaces.MultiDiscrete([SHOT_LOCATIONS, POWER_LEVELS])
         self.action_space = gym.spaces.Discrete(SHOT_LOCATIONS)
+
+    def reset(self):
+        self.grid = np.zeros((GRID_SIZE, GRID_SIZE), dtype=int)
+        self.player_counter = 1
+        self.round_counter = 0
+        self.last_action = None
+
+        return self.grid
 
     def next_player(self):
         self.player_counter += 1
@@ -79,23 +88,68 @@ class CurlingEnv(gym.Env):
                 if rock_to_place != 0:
                     rock_to_place, self.grid[location][i] = self.grid[location][i], rock_to_place
 
+        # update our last action for our render method
+        self.last_action = (action, self.player_counter)
+
         self.next_player()
 
         self.round_counter += 1
         done = self.round_counter >= ROUNDS
 
         if done:
-            # TODO: calculate reward based on score
-            reward = 10
+            reward = self.calculate_reward()
         else:
-            reward = 0
+            reward = (0, 0)
 
         # TODO: right now we assume only player 1 can train (eg, receive rewards)
         #       maybe rewrite so that each agent is told what player they are
         #       so they can be like player 0 gets reward[0], player 1 gets reward[1]
         return self.grid, reward, done, {}
 
+    def calculate_reward(self):
+        score_1 = 0
+        score_2 = 0
+
+        # Hardcode the squares for now
+        # TODO: replace with a more generic method
+
+        # 1 point tiles
+        if self.grid[0][1] != 0:
+            if self.grid[0][1] == 1:
+                score_1 += 1
+            else:
+                score_2 += 1
+
+        if self.grid[1][0] != 0:
+            if self.grid[1][0] == 1:
+                score_1 += 1
+            else:
+                score_2 += 1
+
+        if self.grid[1][2] != 0:
+            if self.grid[1][2] == 1:
+                score_1 += 1
+            else:
+                score_2 += 1
+
+        if self.grid[2][1] != 0:
+            if self.grid[2][1] == 1:
+                score_1 += 1
+            else:
+                score_2 += 1
+
+        # 3 point tiles
+        if self.grid[1][1] != 0:
+            if self.grid[1][1] == 1:
+                score_1 += 3
+            else:
+                score_2 += 3
+
+        return score_1 - score_2, score_2 - score_1
+
     def render(self, mode='human'):
         print()
+        if self.last_action:
+            print("Player {} threw from {}".format(self.last_action[1], self.last_action[0]))
         for row in self.grid:
             print(row)
