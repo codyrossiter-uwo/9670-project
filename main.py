@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 class RandomAgent(Agent):
 
     def next_move(self, state):
-        return random.randint(0, 2)
+        return random.randint(0, 8)
 
     def update_agent(self, state, action, reward, done):
         # No need to update the state or reward.
@@ -29,11 +29,11 @@ class RandomAgent(Agent):
 
 if __name__ == '__main__':
     env = CurlingEnv()
-    agent1 = MonteCarlo(str(random.randint(0, 100)),
-                        gamma=0.6387,
-                        epsilon=0.9156,
-                        decay_rate=0.9155)
-    agent2 = RandomAgent(str(random.randint(0, 100)))
+    agent1 = MonteCarlo("Monte",
+                        gamma=0.7185,
+                        epsilon=0.96599,
+                        decay_rate=0.98786)
+    agent2 = RandomAgent("Random")
 
     wins = []
     rolling_average = []
@@ -46,7 +46,7 @@ if __name__ == '__main__':
         while not done:
             action = coordinator.next_move(state)
             state, reward, done, _ = env.step(action)
-            coordinator.inform_player(state, action, reward, done)
+            coordinator.inform_players(state, action, reward, done)
             coordinator.next_turn()
 
             if done:

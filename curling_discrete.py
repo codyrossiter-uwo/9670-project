@@ -16,6 +16,8 @@ class CurlingEnv(gym.Env):
     """
     TODO: High-level env overview
 
+    TODO: May need to add rounds to state: eg r1 [001,010,200]
+
     Here the state is represented by a 3x3 grid where each space can have
     a 0 (no rock), 1 (player 1's rock), or 2 (player 2's rock) like so:
 
@@ -40,9 +42,7 @@ class CurlingEnv(gym.Env):
         self.round_counter = 0
         self.last_action = None
 
-        # TODO: convert action to (location, power) pair
-        # self.action_space = gym.spaces.MultiDiscrete([SHOT_LOCATIONS, POWER_LEVELS])
-        self.action_space = gym.spaces.Discrete(SHOT_LOCATIONS)
+        self.action_space = gym.spaces.Discrete(SHOT_LOCATIONS * POWER_LEVELS)
 
     def reset(self):
         self.grid = np.zeros((GRID_SIZE, GRID_SIZE), dtype=int)
@@ -59,16 +59,8 @@ class CurlingEnv(gym.Env):
 
     def step(self, action):
         # Process the shot
-        # TODO: add power level. We'll start with just location for now and randomly
-        #       place the shot
-        location = action
-        random_number = np.random.random()
-        if random_number < 0.25:
-            target = 0
-        elif 0.25 <= random_number < 0.75:
-            target = 1
-        else:
-            target = 2
+        location = int(action / SHOT_LOCATIONS)
+        target = int(action % SHOT_LOCATIONS)
 
         # check to see if the shot is clear
         blocked_tile = None
@@ -147,6 +139,8 @@ class CurlingEnv(gym.Env):
     def render(self, mode='human'):
         print()
         if self.last_action:
-            print("Player {} threw from {}".format(self.last_action[1], self.last_action[0]))
+            location = int(self.last_action[0] / 3)
+            target = int(self.last_action[0] % 3)
+            print("Player {} threw to  {} from {}".format(self.last_action[1], target, location))
         for row in self.grid:
             print(row)

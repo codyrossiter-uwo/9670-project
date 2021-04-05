@@ -33,7 +33,7 @@ class MonteCarlo(Agent):
         self.epsilon = epsilon
         self.decay_rate = decay_rate
 
-        self.Q = defaultdict(lambda: np.random.random(3))
+        self.Q = defaultdict(lambda: np.random.random(9))
         self.optimal_actions = defaultdict(lambda: defaultdict(list))
 
 
@@ -52,7 +52,7 @@ class MonteCarlo(Agent):
 
     def next_move(self, state):
         # TODO: remove hardcoded action space
-        action = epsilon_greedy_policy(3, self.Q, state, self.epsilon, self.optimal_actions)
+        action = epsilon_greedy_policy(9, self.Q, state, self.epsilon, self.optimal_actions)
         return action
 
     def update_agent(self, state, action, reward, done):

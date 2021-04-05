@@ -36,7 +36,7 @@ def objective(trial):
         while not done:
             action = coordinator.next_move(state)
             state, reward, done, _ = env.step(action)
-            coordinator.inform_player(state, action, reward, done)
+            coordinator.inform_players(state, action, reward, done)
             coordinator.next_turn()
 
             if done:
@@ -50,7 +50,7 @@ def objective(trial):
             rolling_average.append(np.mean(wins[-100:]))
 
 
-    score = np.mean(rolling_average)
+    score = np.mean(rolling_average[-5000:])
     return score
 
 study = optuna.create_study(direction="maximize", sampler=optuna.samplers.TPESampler(seed=42))
