@@ -11,6 +11,8 @@ SHOT_LOCATIONS = 3
 POWER_LEVELS = 3
 ROUNDS = 4
 
+ONE_POINT_TILES = [(0, 1), (1, 0), (1, 2), (2, 1)]
+THREE_POINT_TILES = [(1, 1)]
 
 class CurlingEnv(gym.Env):
     """
@@ -99,39 +101,16 @@ class CurlingEnv(gym.Env):
         score_1 = 0
         score_2 = 0
 
-        # Hardcode the squares for now
-        # TODO: replace with a more generic method
-
-        # 1 point tiles
-        if self.grid[0][1] != 0:
-            if self.grid[0][1] == 1:
+        for x, y in ONE_POINT_TILES:
+            if self.grid[x][y] == 1:
                 score_1 += 1
-            else:
+            elif self.grid[x][y] == 2:
                 score_2 += 1
 
-        if self.grid[1][0] != 0:
-            if self.grid[1][0] == 1:
-                score_1 += 1
-            else:
-                score_2 += 1
-
-        if self.grid[1][2] != 0:
-            if self.grid[1][2] == 1:
-                score_1 += 1
-            else:
-                score_2 += 1
-
-        if self.grid[2][1] != 0:
-            if self.grid[2][1] == 1:
-                score_1 += 1
-            else:
-                score_2 += 1
-
-        # 3 point tiles
-        if self.grid[1][1] != 0:
-            if self.grid[1][1] == 1:
+        for x, y in THREE_POINT_TILES:
+            if self.grid[x][y] == 1:
                 score_1 += 3
-            else:
+            elif self.grid[x][y] == 2:
                 score_2 += 3
 
         return score_1 - score_2, score_2 - score_1

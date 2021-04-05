@@ -38,7 +38,7 @@ if __name__ == '__main__':
     wins = []
     rolling_average = []
 
-    for _ in range(100000):
+    for _ in range(10000):
         state = env.reset()
         coordinator = PlayerCoordinator(agent1, agent2, state)
         coordinator.start_episode()
@@ -50,6 +50,7 @@ if __name__ == '__main__':
             coordinator.next_turn()
 
             if done:
+                # print("player 1:", reward[0], "\nplayer 2:", reward[1])
                 if reward[0] > reward[1]:
                     wins.append(1)
                 else:
