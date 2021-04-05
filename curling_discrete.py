@@ -9,7 +9,7 @@ from io import StringIO
 GRID_SIZE = 3
 SHOT_LOCATIONS = 3
 POWER_LEVELS = 3
-ROUNDS = 4
+ROUNDS = 10
 
 ONE_POINT_TILES = [(0, 1), (1, 0), (1, 2), (2, 1)]
 THREE_POINT_TILES = [(1, 1)]
@@ -113,7 +113,15 @@ class CurlingEnv(gym.Env):
             elif self.grid[x][y] == 2:
                 score_2 += 3
 
-        return score_1 - score_2, score_2 - score_1
+        #return score_1 - score_2, score_2 - score_1
+
+        # TODO: test with 1 for winning -1 for drawing or losing
+        if score_1 > score_2:
+            return 1, -1
+        elif score_2 > score_1:
+            return -1, 1
+        else:
+            return -1, -1
 
     def render(self, mode='human'):
         print()

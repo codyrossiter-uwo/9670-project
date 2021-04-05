@@ -9,6 +9,7 @@ from curling_discrete import CurlingEnv
 from main import RandomAgent
 from monte_carlo import MonteCarlo
 from player_coordinator import PlayerCoordinator
+from td_zero import TDZero
 
 """
 This script uses the Optuna library to optimize the hyperparameters as shown
@@ -19,7 +20,8 @@ https://colab.research.google.com/drive/1uRCh8SvpVars-oxyL1t4dBxbXm70F29v?usp=sh
 
 def objective(trial):
     env = CurlingEnv()
-    agent1 = MonteCarlo(str(random.randint(0, 100)),
+    agent1 = TDZero(str(random.randint(0, 100)),
+                        alpha=trial.suggest_float('alpha', 0.1, 1.0),
                         gamma=trial.suggest_float('gamma', 0.1, 1.0),
                         epsilon=trial.suggest_float('epsilon', 0.9, 1.0),
                         decay_rate=trial.suggest_float('decay_rate', 0.9, 0.99999))

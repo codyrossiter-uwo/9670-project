@@ -9,6 +9,10 @@ from player_coordinator import PlayerCoordinator
 
 import matplotlib.pyplot as plt
 
+from td_zero import TDZero
+from tree_backup import TreeBackup
+
+
 class RandomAgent(Agent):
 
     def next_move(self, state):
@@ -29,16 +33,24 @@ class RandomAgent(Agent):
 
 if __name__ == '__main__':
     env = CurlingEnv()
+    """
     agent1 = MonteCarlo("Monte",
                         gamma=0.7185,
                         epsilon=0.96599,
                         decay_rate=0.98786)
+    """
+    agent1 = TDZero(
+        "Zero",
+        alpha=0.5,
+        epsilon=0.9,
+        gamma=0.9,
+        decay_rate=0.999)
     agent2 = RandomAgent("Random")
 
     wins = []
     rolling_average = []
 
-    for _ in range(10000):
+    for _ in range(100):
         state = env.reset()
         coordinator = PlayerCoordinator(agent1, agent2, state)
         coordinator.start_episode()
