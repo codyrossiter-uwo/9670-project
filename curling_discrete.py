@@ -9,7 +9,7 @@ from io import StringIO
 GRID_SIZE = 3
 SHOT_LOCATIONS = 3
 POWER_LEVELS = 3
-ROUNDS = 10
+ROUNDS = 3
 
 ONE_POINT_TILES = [(0, 1), (1, 0), (1, 2), (2, 1)]
 THREE_POINT_TILES = [(1, 1)]

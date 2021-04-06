@@ -2,33 +2,16 @@ import random
 
 import numpy as np
 
-from agent import Agent
+from agents.agent import Agent
+from agents.random_agent import RandomAgent
 from curling_discrete import CurlingEnv
-from monte_carlo import MonteCarlo
 from player_coordinator import PlayerCoordinator
 
 import matplotlib.pyplot as plt
 
-from td_zero import TDZero
-from tree_backup import TreeBackup
+from agents.td_zero import TDZero
 
 
-class RandomAgent(Agent):
-
-    def next_move(self, state):
-        return random.randint(0, 8)
-
-    def update_agent(self, state, action, reward, done):
-        # No need to update the state or reward.
-        pass
-
-    def start_episode(self):
-        # No state to initialize
-        pass
-
-    def end_episode(self):
-        # No state or variable updates needed.
-        pass
 
 
 if __name__ == '__main__':
@@ -41,16 +24,16 @@ if __name__ == '__main__':
     """
     agent1 = TDZero(
         "Zero",
-        alpha=0.5,
-        epsilon=0.9,
-        gamma=0.9,
-        decay_rate=0.999)
-    agent2 = RandomAgent("Random")
+        alpha=0.93917,
+        epsilon=0.94059,
+        gamma=0.11040,
+        decay_rate=0.96481)
+    agent2 = RandomAgent("Random", 9)
 
     wins = []
     rolling_average = []
 
-    for _ in range(100):
+    for _ in range(10000):
         state = env.reset()
         coordinator = PlayerCoordinator(agent1, agent2, state)
         coordinator.start_episode()

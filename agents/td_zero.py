@@ -1,6 +1,6 @@
 from collections import defaultdict
 
-from agent import Agent
+from agents.agent import Agent
 import pickle
 import numpy as np
 

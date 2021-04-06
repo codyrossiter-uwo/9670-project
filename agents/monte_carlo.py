@@ -3,7 +3,7 @@ import pickle
 import random
 from collections import defaultdict
 
-from agent import Agent
+from agents.agent import Agent
 
 
 def epsilon_greedy_policy(action_space, Q, state, epsilon, optimal_actions):
