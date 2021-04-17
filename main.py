@@ -32,6 +32,7 @@ if __name__ == '__main__':
     """
     agent = MonteCarlo("Zero",
                        training_mode=True,
+                       action_space=9,
                        gamma=0.48542,
                        epsilon=0.94587,
                        decay_rate=0.999)

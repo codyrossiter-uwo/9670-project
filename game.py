@@ -2,14 +2,15 @@ from curling_discrete import CurlingEnv
 from player_coordinator import PlayerCoordinator
 
 class Game:
-    def __init__(self):
+    def __init__(self, hard_mode=False):
         self.env = CurlingEnv()
+        self.hard_mode = hard_mode
 
     def get_environment(self):
         return self.env
 
     def play(self, agent1, agent2, render=False):
-        env = CurlingEnv()
+        env = CurlingEnv(self.hard_mode)
         state = env.reset()
         coordinator = PlayerCoordinator(agent1, agent2, state)
         coordinator.start_episode()

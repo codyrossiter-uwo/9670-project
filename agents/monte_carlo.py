@@ -31,13 +31,14 @@ def epsilon_greedy_policy(action_space, Q, state, epsilon, optimal_actions):
 
 
 class MonteCarlo(Agent):
-    def __init__(self, name, training_mode, gamma=1, epsilon=0.1, decay_rate=0.99):
+    def __init__(self, name, training_mode, action_space, gamma=1, epsilon=0.1, decay_rate=0.99):
         super().__init__(name, training_mode)
+        self.action_space = action_space
         self.gamma = gamma
         self.epsilon = epsilon
         self.decay_rate = decay_rate
 
-        self.Q = defaultdict(lambda: list(np.random.random(16)))
+        self.Q = defaultdict(lambda: list(np.random.random(action_space)))
         self.optimal_actions = defaultdict(None)
 
     def load_data(self, filepath):
@@ -73,8 +74,7 @@ class MonteCarlo(Agent):
         self.epsilon *= self.decay_rate
 
     def next_move(self, state):
-        # TODO: remove hardcoded action space
-        action = epsilon_greedy_policy(16, self.Q, state, self.epsilon, self.optimal_actions)
+        action = epsilon_greedy_policy(self.action_space, self.Q, state, self.epsilon, self.optimal_actions)
         return action
 
     def update_agent(self, state, action, reward, done):

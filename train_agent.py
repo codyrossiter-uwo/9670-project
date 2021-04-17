@@ -8,7 +8,7 @@ from game import Game
 from tqdm import tqdm
 import numpy as np
 
-NUM_GAMES = 10000
+NUM_GAMES = 100000
 
 if __name__ == '__main__':
     mean_wins = []
@@ -23,6 +23,7 @@ if __name__ == '__main__':
     """
     agent = MonteCarlo("Zero",
                    training_mode=True,
+                   action_space=game.get_environment().action_space.n,
                    gamma=0.48542,
                    epsilon=0.94587,
                    decay_rate=0.999)
