@@ -8,7 +8,7 @@ from game import Game
 from tqdm import tqdm
 import numpy as np
 
-NUM_GAMES = 100000
+NUM_GAMES = 1000000
 
 if __name__ == '__main__':
     mean_wins = []
@@ -24,9 +24,11 @@ if __name__ == '__main__':
     agent = MonteCarlo("Zero",
                    training_mode=True,
                    action_space=game.get_environment().action_space.n,
-                   gamma=0.48542,
-                   epsilon=0.94587,
-                   decay_rate=0.999)
+                   gamma=0.7364,
+                   #epsilon=0.68118,
+                   epsilon=0,
+                   decay_rate=0)
+                   #decay_rate=0.56880)
     filepath = "monte.json"
     agent.load_data(filepath)
     opponent = RandomAgent("Random", False, game.get_environment().action_space.n)
@@ -46,6 +48,8 @@ if __name__ == '__main__':
 
     agent.save_data(filepath)
     mean_wins.append(np.mean(wins))
+    last_quarter_win_percentage = np.mean(wins[-int(NUM_GAMES/4):])
 
-    print(mean_wins)
+    print("Mean win percentage", mean_wins)
+    print("Win percentage for the last quarter", last_quarter_win_percentage)
 

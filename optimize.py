@@ -3,6 +3,7 @@ import random
 import numpy as np
 import optuna
 
+from agents.monte_carlo import MonteCarlo
 from agents.random_agent import RandomAgent
 from curling_discrete import CurlingEnv
 from player_coordinator import PlayerCoordinator
@@ -16,14 +17,22 @@ https://colab.research.google.com/drive/1uRCh8SvpVars-oxyL1t4dBxbXm70F29v?usp=sh
 
 
 def objective(trial):
-    env = CurlingEnv()
+    env = CurlingEnv(hard_mode=True)
+    """
     agent1 = TDZero(str(random.randint(0, 100)),
                         training_mode=True,
                         alpha=trial.suggest_float('alpha', 0.1, 1.0),
                         gamma=trial.suggest_float('gamma', 0.1, 1.0),
                         epsilon=trial.suggest_float('epsilon', 0.9, 1.0),
                         decay_rate=trial.suggest_float('decay_rate', 0.9, 0.99999))
-    agent2 = RandomAgent("Random", False, 16)
+    """
+    agent1 = MonteCarlo("Monte Carlo",
+                        training_mode=True,
+                        action_space=env.action_space.n,
+                        gamma=trial.suggest_float('gamma', 0.1, 1.0),
+                        epsilon=trial.suggest_float('epsilon', 0.1, 1.0),
+                        decay_rate=trial.suggest_float('decay_rate', 0.5, 0.9999))
+    agent2 = RandomAgent("Random", False, env.action_space.n)
 
     wins = []
     rolling_average = []

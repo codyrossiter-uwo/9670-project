@@ -7,6 +7,14 @@ EASY_REWARD_GRID = [
     [0, 1, 0]
 ]
 
+HARD_REWARD_GRID = [
+    [0, 0, 1, 0, 0],
+    [0, 1, 2, 1, 0],
+    [1, 2, 3, 2, 1],
+    [0, 1, 2, 1, 0],
+    [0, 0, 1, 0, 0]
+]
+
 class CurlingEnv(gym.Env):
     """
     TODO: High-level env overview
@@ -41,7 +49,7 @@ class CurlingEnv(gym.Env):
         self.rounds_to_play = 3 if not hard_mode else 5
         self.grid = np.zeros((self.grid_size, self.grid_size), dtype=int)
         # TODO make hard reward grid
-        self.reward_grid = EASY_REWARD_GRID if not hard_mode else None
+        self.reward_grid = EASY_REWARD_GRID if not hard_mode else HARD_REWARD_GRID
         self.player_counter = 1
         self.turn_counter = 0
         self.last_action = None
@@ -126,6 +134,6 @@ class CurlingEnv(gym.Env):
         if self.last_action:
             location = int(self.last_action[0] / self.shot_locations)
             target = int(self.last_action[0] % self.power_levels)
-            print("Player {} threw to  {} from {}".format(self.last_action[1], target, location))
+            print("Player {} threw from {} with power level {}".format(self.last_action[1], location, target))
         for row in self.grid:
             print(row)

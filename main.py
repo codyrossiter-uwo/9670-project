@@ -21,7 +21,7 @@ TODO: write a script for how I would train one agent against another for X episo
 
 
 if __name__ == '__main__':
-    game = Game()
+    game = Game(hard_mode=True)
     """
     agent = TDZero("Zero",
                    training_mode=True,
@@ -30,14 +30,14 @@ if __name__ == '__main__':
                    epsilon=0.94587,
                    decay_rate=0.9658)
     """
-    agent = MonteCarlo("Zero",
+    agent = MonteCarlo("Monte Carlo",
                        training_mode=True,
-                       action_space=9,
+                       action_space=game.get_environment().action_space.n,
                        gamma=0.48542,
                        epsilon=0.94587,
                        decay_rate=0.999)
     filepath = "monte.json"
-    agent.load_data(filepath)
+    #agent.load_data(filepath)
     opponent = RandomAgent("Random", False, game.get_environment().action_space.n)
 
     # TODO: add back in shuffle code and format output to show agent name
@@ -48,7 +48,7 @@ if __name__ == '__main__':
     else:
         print("Draw")
 
-    agent.save_data(filepath)
+    #agent.save_data(filepath)
 
     """
     print("Wins {}".format(np.sum(wins)))

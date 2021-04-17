@@ -3,7 +3,7 @@ from player_coordinator import PlayerCoordinator
 
 class Game:
     def __init__(self, hard_mode=False):
-        self.env = CurlingEnv()
+        self.env = CurlingEnv(hard_mode)
         self.hard_mode = hard_mode
 
     def get_environment(self):
