@@ -1,16 +1,20 @@
+import json
+from json import JSONDecodeError
+
 import numpy as np
 import pickle
 import random
 from collections import defaultdict
 
 from agents.agent import Agent
+from helper import state_to_string
 
 
 def epsilon_greedy_policy(action_space, Q, state, epsilon, optimal_actions):
     # If we know the optimal action, we use the updated probabilities to randomly select it or
     # the sub-optimal actions.
-    hashable_state = pickle.dumps(state)
-    if optimal_actions[hashable_state]:
+    hashable_state = state_to_string(state)
+    if hashable_state in optimal_actions:
         if np.random.random() < 1 - epsilon + (epsilon / action_space):
             return optimal_actions[hashable_state]
         else:
@@ -27,14 +31,32 @@ def epsilon_greedy_policy(action_space, Q, state, epsilon, optimal_actions):
 
 
 class MonteCarlo(Agent):
-    def __init__(self, name, gamma=1, epsilon=0.1, decay_rate=0.99):
-        super().__init__(name)
+    def __init__(self, name, training_mode, gamma=1, epsilon=0.1, decay_rate=0.99):
+        super().__init__(name, training_mode)
         self.gamma = gamma
         self.epsilon = epsilon
         self.decay_rate = decay_rate
 
-        self.Q = defaultdict(lambda: np.random.random(9))
-        self.optimal_actions = defaultdict(lambda: defaultdict(list))
+        self.Q = defaultdict(lambda: list(np.random.random(16)))
+        self.optimal_actions = defaultdict(None)
+
+    def load_data(self, filepath):
+        with open(filepath, "r") as file:
+            try:
+                data = json.load(file)
+                self.Q.update(data["Q"])
+                self.optimal_actions.update(data["optimal_actions"])
+            except JSONDecodeError:
+                print("JSON data for {} not found. Initializing with empty values".format(self.name))
+
+    def save_data(self, filepath):
+        # build the json entry
+        data = {
+            "Q": dict(self.Q),
+            "optimal_actions": dict(self.optimal_actions)
+        }
+        with open(filepath, "w") as file:
+            json.dump(data, file)
 
 
     def start_episode(self):
@@ -52,13 +74,15 @@ class MonteCarlo(Agent):
 
     def next_move(self, state):
         # TODO: remove hardcoded action space
-        action = epsilon_greedy_policy(9, self.Q, state, self.epsilon, self.optimal_actions)
+        action = epsilon_greedy_policy(16, self.Q, state, self.epsilon, self.optimal_actions)
         return action
 
     def update_agent(self, state, action, reward, done):
+        if not self.training_mode:
+            return
 
         # store our Si, Ai, Ri+1
-        self.states.append(state)
+        self.states.append(state_to_string(state))
         self.actions.append(action)
         self.rewards.append(reward)
 
@@ -74,7 +98,7 @@ class MonteCarlo(Agent):
                     self.Q[self.states[t]][self.actions[t]] = np.average(self.returns[self.states[t]][self.actions[t]])
                     a_star = np.argmax(self.Q[self.states[t]])
                     # add the optimal action, the probabilities are handled in the policy function
-                    self.optimal_actions[self.states[t]] = a_star
+                    self.optimal_actions[self.states[t]] = int(a_star)
 
             # add the episode reward sum for our graph
             # cumulative_rewards.append(np.sum(rewards))

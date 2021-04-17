@@ -6,13 +6,14 @@ from gym import utils
 from gym.envs.toy_text import discrete
 from io import StringIO
 
-GRID_SIZE = 3
-SHOT_LOCATIONS = 3
-POWER_LEVELS = 3
-ROUNDS = 3
+GRID_SIZE = 4
+SHOT_LOCATIONS = 4
+POWER_LEVELS = 4
+ROUNDS = 4
 
-ONE_POINT_TILES = [(0, 1), (1, 0), (1, 2), (2, 1)]
-THREE_POINT_TILES = [(1, 1)]
+ONE_POINT_TILES = [(0, 0), (0, 3), (3, 0), (3, 3)]
+TWO_POINT_TILES = [(1, 2), (2, 1)]
+THREE_POINT_TILES = [(1, 1), (2, 2)]
 
 class CurlingEnv(gym.Env):
     """
@@ -20,12 +21,14 @@ class CurlingEnv(gym.Env):
 
     TODO: May need to add rounds to state: eg r1 [001,010,200]
 
-    Here the state is represented by a 3x3 grid where each space can have
+    Here the state is represented by a 4x4 grid where each space can have
     a 0 (no rock), 1 (player 1's rock), or 2 (player 2's rock) like so:
 
-    0 0 1
-    2 2 0
-    1 1 0
+    round 2
+    0 0 1 0
+    2 2 0 0
+    1 1 0 0
+    2 0 1 1
 
     TODO: Determine number of rounds
     Rewards are given at the end of the episode based on the points scored.
@@ -33,9 +36,10 @@ class CurlingEnv(gym.Env):
     give a reward of 1, and no rewards are given for corner positions.
     The reward grid looks like:
 
-    0 1 0
-    1 3 1
-    0 1 0
+    1 0 0 1
+    0 3 2 0
+    0 2 3 0
+    1 0 0 1
     """
 
     def __init__(self):
@@ -52,7 +56,7 @@ class CurlingEnv(gym.Env):
         self.round_counter = 0
         self.last_action = None
 
-        return self.grid
+        return [self.round_counter, self.grid]
 
     def next_player(self):
         self.player_counter += 1
@@ -62,7 +66,7 @@ class CurlingEnv(gym.Env):
     def step(self, action):
         # Process the shot
         location = int(action / SHOT_LOCATIONS)
-        target = int(action % SHOT_LOCATIONS)
+        target = int(action % POWER_LEVELS)
 
         # check to see if the shot is clear
         blocked_tile = None
@@ -95,7 +99,7 @@ class CurlingEnv(gym.Env):
         else:
             reward = (0, 0)
 
-        return self.grid, reward, done, {}
+        return [self.round_counter, self.grid], reward, done, {}
 
     def calculate_reward(self):
         score_1 = 0
@@ -106,6 +110,12 @@ class CurlingEnv(gym.Env):
                 score_1 += 1
             elif self.grid[x][y] == 2:
                 score_2 += 1
+
+        for x, y in TWO_POINT_TILES:
+            if self.grid[x][y] == 1:
+                score_1 += 2
+            elif self.grid[x][y] == 2:
+                score_2 += 2
 
         for x, y in THREE_POINT_TILES:
             if self.grid[x][y] == 1:
@@ -126,8 +136,8 @@ class CurlingEnv(gym.Env):
     def render(self, mode='human'):
         print()
         if self.last_action:
-            location = int(self.last_action[0] / 3)
-            target = int(self.last_action[0] % 3)
+            location = int(self.last_action[0] / SHOT_LOCATIONS)
+            target = int(self.last_action[0] % POWER_LEVELS)
             print("Player {} threw to  {} from {}".format(self.last_action[1], target, location))
         for row in self.grid:
             print(row)

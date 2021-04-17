@@ -3,8 +3,10 @@ import random
 import numpy as np
 
 from agents.agent import Agent
+from agents.monte_carlo import MonteCarlo
 from agents.random_agent import RandomAgent
 from curling_discrete import CurlingEnv
+from game import Game
 from player_coordinator import PlayerCoordinator
 
 import matplotlib.pyplot as plt
@@ -12,53 +14,46 @@ import matplotlib.pyplot as plt
 from agents.td_zero import TDZero
 
 
+"""
+TODO: write a script for how I would train one agent against another for X episodes
+      Then, this can be used to write the game manager methods.
+"""
 
 
 if __name__ == '__main__':
-    env = CurlingEnv()
+    game = Game()
     """
-    agent1 = MonteCarlo("Monte",
-                        gamma=0.7185,
-                        epsilon=0.96599,
-                        decay_rate=0.98786)
+    agent = TDZero("Zero",
+                   training_mode=True,
+                   alpha=0.4179,
+                   gamma=0.48542,
+                   epsilon=0.94587,
+                   decay_rate=0.9658)
     """
-    agent1 = TDZero(
-        "Zero",
-        alpha=0.93917,
-        epsilon=0.94059,
-        gamma=0.11040,
-        decay_rate=0.96481)
-    agent2 = RandomAgent("Random", 9)
+    agent = MonteCarlo("Zero",
+                       training_mode=True,
+                       gamma=0.48542,
+                       epsilon=0.94587,
+                       decay_rate=0.999)
+    filepath = "monte.json"
+    agent.load_data(filepath)
+    opponent = RandomAgent("Random", False, game.get_environment().action_space.n)
 
-    wins = []
-    rolling_average = []
+    # TODO: add back in shuffle code and format output to show agent name
+    winner = game.play(agent, opponent, render=True)
 
-    for _ in range(10000):
-        state = env.reset()
-        coordinator = PlayerCoordinator(agent1, agent2, state)
-        coordinator.start_episode()
-        done = False
-        while not done:
-            action = coordinator.next_move(state)
-            state, reward, done, _ = env.step(action)
-            coordinator.inform_players(state, action, reward, done)
-            coordinator.next_turn()
+    if winner:
+        print("Winner is {}".format(winner.name))
+    else:
+        print("Draw")
 
-            if done:
-                # print("player 1:", reward[0], "\nplayer 2:", reward[1])
-                if reward[0] > reward[1]:
-                    wins.append(1)
-                else:
-                    wins.append(0)
+    agent.save_data(filepath)
 
-        coordinator.end_episode()
-        if len(wins) > 100:
-            rolling_average.append(np.mean(wins[-100:]))
-
-
+    """
     print("Wins {}".format(np.sum(wins)))
     plt.plot(rolling_average)
     plt.ylabel("Average over 100")
     plt.xlabel("episode")
     plt.savefig("debug-result")
+    """
 

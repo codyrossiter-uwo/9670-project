@@ -3,8 +3,8 @@ from agents.agent import Agent
 
 
 class RandomAgent(Agent):
-    def __init__(self, name, action_space):
-        super().__init__(name)
+    def __init__(self, name, training_mode, action_space):
+        super().__init__(name, training_mode)
         self.action_space = action_space
 
     def next_move(self, state):

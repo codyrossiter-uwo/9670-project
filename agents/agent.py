@@ -4,16 +4,24 @@ class Agent:
     The PlayerCoordinator class will use these methods to interact with
     the environment.
     """
-    def __init__(self, name):
+    def __init__(self, name, training_mode):
         self.name = name
+        self.training_mode = training_mode
         # TODO: add support for reading/saving policy data from file
-        # TODO: add support for learning mode/playing mode
 
-    def next_move(self, state):
+    def load_data(self, filepath):
         """
-        Get the next action from the agent based on the current state.
-        :param state: The state used to determine the next action.
-        :return: The agent's next action.
+        Load the agent's data (if it exists) from the agent json file.
+        :param filepath: The location of the agent data file.
+        :return: None
+        """
+        raise NotImplementedError()
+
+    def save_data(self, filepath):
+        """
+        Save the agent's data to the agent json file.
+        :param filepath: The location of the agent data file.
+        :return: None
         """
         raise NotImplementedError()
 
@@ -29,6 +37,14 @@ class Agent:
         """
         Perform any work needed after episodes e.g., decaying epsilon.
         :return: None
+        """
+        raise NotImplementedError()
+
+    def next_move(self, state):
+        """
+        Get the next action from the agent based on the current state.
+        :param state: The state used to determine the next action.
+        :return: The agent's next action.
         """
         raise NotImplementedError()
 
