@@ -17,29 +17,23 @@ HARD_REWARD_GRID = [
 
 class CurlingEnv(gym.Env):
     """
-    TODO: High-level env overview
+    This environment simulates a game of curling.
+    The agent's will take turns throwing rocks at the board until a certain number of rounds have been
+    reached. After the round limit has been reached, the scores will be tallied and a winner will be returned.
 
-    TODO: May need to add rounds to state: eg r1 [001,010,200]
-
-    Here the state is represented by a 4x4 grid where each space can have
+    Here the state is represented by a round number and a 3x3 or 5x5 grid where each space can have
     a 0 (no rock), 1 (player 1's rock), or 2 (player 2's rock) like so:
 
-    round 2
-    0 0 1 0
-    2 2 0 0
-    1 1 0 0
-    2 0 1 1
+    2,
+    0 0 1
+    2 0 0
+    0 1 0
 
-    TODO: Determine number of rounds
     Rewards are given at the end of the episode based on the points scored.
-    The center square gives a reward of 3, the positions to the left/right/above/below
-    give a reward of 1, and no rewards are given for corner positions.
-    The reward grid looks like:
-
-    1 0 0 1
-    0 3 2 0
-    0 2 3 0
-    1 0 0 1
+    The two reward grids indicate what amount of points a tile is worth. So in the 3x3 grid,
+    if player 1 has a rock on grid square [1,1] then they receive three points.
+    The player with the most points gets a 1 and the other agent gets a reward of -1.
+    Ties result in both players receiving a -1.
     """
 
     def __init__(self, hard_mode=False):
@@ -48,7 +42,6 @@ class CurlingEnv(gym.Env):
         self.power_levels = 3 if not hard_mode else 5
         self.rounds_to_play = 3 if not hard_mode else 5
         self.grid = np.zeros((self.grid_size, self.grid_size), dtype=int)
-        # TODO make hard reward grid
         self.reward_grid = EASY_REWARD_GRID if not hard_mode else HARD_REWARD_GRID
         self.player_counter = 1
         self.turn_counter = 0

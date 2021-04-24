@@ -26,7 +26,7 @@ class TDZero(Agent):
         self.decay_rate = decay_rate
 
         # convert to list to make json saving/loading easier
-        self.Q = defaultdict(lambda: list(np.random.random(16)))
+        self.Q = defaultdict(lambda: list(np.random.random(25)))
         self.V = defaultdict(lambda: 0)
         self.previous_state = None
 
@@ -55,7 +55,7 @@ class TDZero(Agent):
         # store this one so we can process it later.
         self.previous_state = state
         # TODO: remove hard-coded state space
-        return epsilon_greedy_policy(16, self.Q, state, self.epsilon)
+        return epsilon_greedy_policy(25, self.Q, state, self.epsilon)
 
     def start_episode(self):
         self.previous_state = None

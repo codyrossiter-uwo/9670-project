@@ -14,13 +14,6 @@ import matplotlib.pyplot as plt
 
 from agents.td_zero import TDZero
 
-
-"""
-TODO: write a script for how I would train one agent against another for X episodes
-      Then, this can be used to write the game manager methods.
-"""
-
-
 if __name__ == '__main__':
     game = Game(hard_mode=True)
     """
@@ -57,12 +50,4 @@ if __name__ == '__main__':
         print("Draw")
 
     #agent.save_data(filepath)
-
-    """
-    print("Wins {}".format(np.sum(wins)))
-    plt.plot(rolling_average)
-    plt.ylabel("Average over 100")
-    plt.xlabel("episode")
-    plt.savefig("debug-result")
-    """
 

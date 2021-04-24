@@ -7,7 +7,6 @@ class Agent:
     def __init__(self, name, training_mode):
         self.name = name
         self.training_mode = training_mode
-        # TODO: add support for reading/saving policy data from file
 
     def load_data(self, filepath):
         """
