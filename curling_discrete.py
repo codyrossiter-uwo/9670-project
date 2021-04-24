@@ -119,9 +119,6 @@ class CurlingEnv(gym.Env):
                 elif self.grid[x][y] == 2:
                     score_2 += value
 
-        #return score_1 - score_2, score_2 - score_1
-
-        # TODO: test with 1 for winning -1 for drawing or losing
         if score_1 > score_2:
             return 1, -1
         elif score_2 > score_1:

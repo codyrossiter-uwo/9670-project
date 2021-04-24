@@ -2,7 +2,9 @@ import random
 
 import numpy as np
 import optuna
+from tqdm import tqdm
 
+from agents.actor_critic import ActorCritic
 from agents.monte_carlo import MonteCarlo
 from agents.random_agent import RandomAgent
 from curling_discrete import CurlingEnv
@@ -26,18 +28,26 @@ def objective(trial):
                         epsilon=trial.suggest_float('epsilon', 0.9, 1.0),
                         decay_rate=trial.suggest_float('decay_rate', 0.9, 0.99999))
     """
+    """
     agent1 = MonteCarlo("Monte Carlo",
                         training_mode=True,
                         action_space=env.action_space.n,
                         gamma=trial.suggest_float('gamma', 0.1, 1.0),
                         epsilon=trial.suggest_float('epsilon', 0.1, 1.0),
                         decay_rate=trial.suggest_float('decay_rate', 0.5, 0.9999))
+    """
+    agent1 = ActorCritic("Actor Critic",
+                        training_mode=True,
+                        action_space=env.action_space.n,
+                        actor_lr=trial.suggest_float("actor_lr", 0.0001, 0.3),
+                        critic_lr=trial.suggest_float("critic_lr", 0.0001, 0.3),
+                        gamma=trial.suggest_float("gamma", 0.1, 0.9))
     agent2 = RandomAgent("Random", False, env.action_space.n)
 
     wins = []
     rolling_average = []
 
-    for _ in range(10000):
+    for _ in tqdm(range(1000)):
         state = env.reset()
         coordinator = PlayerCoordinator(agent1, agent2, state)
         coordinator.start_episode()

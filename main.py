@@ -2,6 +2,7 @@ import random
 
 import numpy as np
 
+from agents.actor_critic import ActorCritic
 from agents.agent import Agent
 from agents.monte_carlo import MonteCarlo
 from agents.random_agent import RandomAgent
@@ -30,17 +31,24 @@ if __name__ == '__main__':
                    epsilon=0.94587,
                    decay_rate=0.9658)
     """
+    """
     agent = MonteCarlo("Monte Carlo",
                        training_mode=True,
                        action_space=game.get_environment().action_space.n,
                        gamma=0.48542,
                        epsilon=0.94587,
                        decay_rate=0.999)
+   """
+    agent = ActorCritic("Actor Critic",
+                        training_mode=True,
+                        action_space=game.get_environment().action_space.n,
+                        actor_lr=0.01,
+                        critic_lr=0.01,
+                        gamma=0.5)
     filepath = "monte.json"
     #agent.load_data(filepath)
     opponent = RandomAgent("Random", False, game.get_environment().action_space.n)
 
-    # TODO: add back in shuffle code and format output to show agent name
     winner = game.play(agent, opponent, render=True)
 
     if winner:
